@@ -3,7 +3,7 @@ import numpy as np
 import time
 
 from encoder import encoderModel
-from image_loader import training_data_x, training_data_y, test_data_x, test_data_y, train_source_generator, train_target_generator
+from image_loader import training_data_x, training_data_y, test_data_x, test_data_y 
 
 encoderModel.load_weights('weights/encoder.h5')
 

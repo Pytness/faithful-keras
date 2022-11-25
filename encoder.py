@@ -2,7 +2,8 @@
 
 from keras.models import Sequential, Model
 from keras.layers import Activation, Input
-from keras.layers import Conv2D, MaxPooling2D, UpSampling2D
+from keras.layers import Conv2D, MaxPooling2D, UpSampling2D, Reshape
+import tensorflow as tf
 import keras.metrics
 image_shape = (16, 16, 4)
 # Define the model
@@ -11,64 +12,39 @@ image_shape = (16, 16, 4)
 encoderInput = Input(shape=image_shape, name="encoderInput")
 
 # -----------------------------------------------------------------
-encoderLayer = Conv2D(8, (2, 2), padding='same')(encoderInput)
-encoderLayer = Activation('relu')(encoderLayer)
-encoderLayer = Conv2D(8, (2, 2), padding='same')(encoderInput)
-encoderLayer = Activation('relu')(encoderLayer)
-encoderLayer = UpSampling2D(2)(encoderLayer)
+encoderLayer = Conv2D(16, (3, 3), activation="relu")(encoderInput)
+encoderLayer = Conv2D(32, (3, 3), activation="relu")(encoderLayer)
+encoderLayer = Conv2D(32, (3, 3), activation="relu")(encoderLayer)
+encoderLayer = Conv2D(64, (3, 3), activation="relu")(encoderLayer)
+encoderLayer = Conv2D(64, (3, 3), activation="relu")(encoderLayer)
+encoderLayer = Conv2D(256, (3, 3), activation="relu")(encoderLayer)
+encoderLayer = Conv2D(256, (1, 1), activation="relu")(encoderLayer)
 
-# -----------------------------------------------------------------
-encoderLayer = Conv2D(12, (2, 2), padding='same')(encoderLayer)
-encoderLayer = Activation('relu')(encoderLayer)
-encoderLayer = UpSampling2D(2)(encoderLayer)
-
-# -----------------------------------------------------------------
-encoderLayer = Conv2D(16, (8, 8), padding='same')(encoderLayer)
-encoderLayer = Activation('relu')(encoderLayer)
-encoderLayer = UpSampling2D(2)(encoderLayer)
-
-# -----------------------------------------------------------------
+encoderLayer = Conv2D(256, (3, 3), activation="relu", padding="same")(encoderLayer)
+encoderLayer = Conv2D(256, (3, 3), activation="relu", padding="same")(encoderLayer)
+encoderLayer = Conv2D(256, (3, 3), activation="relu", padding="same")(encoderLayer)
+encoderLayer = Conv2D(256, (3, 3), activation="relu", padding="same")(encoderLayer)
+encoderLayer = Conv2D(256, (3, 3), activation="relu", padding="same")(encoderLayer)
+encoderLayer = Conv2D(256, (3, 3), activation="relu", padding="same")(encoderLayer)
 
 
-# -----------------------------------------------------------------
-encoderLayer = Conv2D(12, (8, 8), padding='same')(encoderLayer)
-encoderLayer = Activation('relu')(encoderLayer)
-encoderLayer = Conv2D(12, (8, 8), padding='same')(encoderLayer)
-encoderLayer = Activation('relu')(encoderLayer)
-encoderLayer = Conv2D(12, (8, 8), padding='same')(encoderLayer)
-encoderLayer = Activation('relu')(encoderLayer)
-encoderLayer = Conv2D(12, (8, 8), padding='same')(encoderLayer)
-encoderLayer = Activation('relu')(encoderLayer)
 
-encoderLayer = MaxPooling2D(pool_size=(2, 2), padding='same')(encoderLayer)
-
-encoderLayer = Conv2D(12, (2, 2), padding='same')(encoderLayer)
-encoderLayer = Activation('relu')(encoderLayer)
-encoderLayer = MaxPooling2D(pool_size=(2, 2), padding='same')(encoderLayer)
-
-# 2nd encoder convolution layer
-encoderLayer = Conv2D(8, (2, 2), padding='same')(encoderLayer)
-encoderLayer = Activation('relu')(encoderLayer)
-encoderLayer = Conv2D(4, (8, 8), padding='same')(encoderLayer)
-encoderLayer = Activation('relu')(encoderLayer)
-encoderLayer = Conv2D(4, (8, 8), padding='same')(encoderLayer)
-encoderLayer = Activation('relu')(encoderLayer)
-# encoderLayer = MaxPooling2D(pool_size=(2,2), padding='same')(encoderLayer)
-
-# 2nd encoder convolution layer again
-# encoderLayer = Conv2D(3,(3, 3), padding='same')(encoderLayer)
-encoderLayer = Activation('relu', name="encoderOutput")(encoderLayer)
+encoderLayer = Reshape((32, 32, 4))(encoderLayer)
+encoderLayer = Activation("sigmoid")(encoderLayer)
 
 encoderModel = Model(encoderInput, encoderLayer)
 encoderModel.summary()
+optimizer = keras.optimizers.Adam(learning_rate=0.001)
 
 # encoderModel.summary()
-
+# Loss functtion
+def ssim_loss(y_true, y_pred):
+	return 1 - tf.reduce_mean(tf.image.ssim(y_true, y_pred, 1.0))
 
 encoderModel.compile(
 	optimizer='adam',
-	loss='mean_squared_error',
-	metrics=['accuracy']
+	loss=ssim_loss,
+	metrics=['accuracy'],
 )
 
 # save models

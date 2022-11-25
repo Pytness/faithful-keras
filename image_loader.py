@@ -41,5 +41,4 @@ datagen = ImageDataGenerator(**datagen_args)
 datagen.fit(training_data_x)
  
 
-train_source_generator = datagen.flow(training_data_x, training_data_y, batch_size=32, seed=1)
-train_target_generator = source_datagen.flow(training_data_y, batch_size=32, seed=1)
+datagen_generator = datagen.flow(training_data_x, training_data_y, batch_size=128, seed=1)
