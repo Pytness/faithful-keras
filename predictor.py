@@ -2,13 +2,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 
-from encoder import encoderModel
+from model import model
 from image_loader import training_data_x, training_data_y, test_data_x, test_data_y 
 
-encoderModel.load_weights('weights/encoder.h5')
+# model.load_weights('weights/model.h5')
+model.load_weights('checkpoints/chkpt')
 
 
-encoded_images = encoderModel.predict(test_data_x)
+encoded_images = model.predict(test_data_x)
 
 
 # plot 10 collumns of 3 images each
@@ -24,7 +25,7 @@ for i in range(columns):
 	axs[2, i].imshow(encoded_images[i])
 plt.savefig('output/result_test_%s_%s.png' % (i, time.time()))
 
-encoded_images = encoderModel.predict(training_data_x)
+encoded_images = model.predict(training_data_x)
 
 fig, axs = plt.subplots(rows, columns, figsize=(20, 4))
 

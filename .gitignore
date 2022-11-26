@@ -3,5 +3,4 @@ extracted_images/
 models/
 output/
 weights/
-checkpoint*
-
+checkpoints/
