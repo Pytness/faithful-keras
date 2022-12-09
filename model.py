@@ -8,14 +8,27 @@ def deconv_block(input, filters, kernel_size, padding="same"):
     return layer
 
 input = keras.layers.Input(shape=(16, 16, 4))
-layer = deconv_block(input, 64, (3, 3))
+layer = deconv_block(input, 256, (3, 3), padding="valid")
+layer = deconv_block(layer, 256, (3, 3), padding="valid")
+layer = deconv_block(layer, 256, (3, 3), padding="valid")
+layer = deconv_block(layer, 256, (3, 3), padding="valid")
+layer = deconv_block(layer, 256, (3, 3))
+layer = deconv_block(layer, 256, (3, 3))
+layer = deconv_block(layer, 256, (3, 3))
+layer = deconv_block(layer, 256, (3, 3), padding="valid") #upsample
+layer = deconv_block(layer, 128, (3, 3))
+layer = deconv_block(layer, 128, (3, 3))
+layer = deconv_block(layer, 128, (3, 3))
+layer = deconv_block(layer, 128, (3, 3))
+layer = deconv_block(layer, 128, (3, 3))
+layer = deconv_block(layer, 128, (3, 3), padding="valid") #upsample
 layer = deconv_block(layer, 64, (3, 3))
 layer = deconv_block(layer, 64, (3, 3))
 layer = deconv_block(layer, 64, (3, 3))
-layer = keras.layers.UpSampling2D((2,2))(layer)
+layer = deconv_block(layer, 64, (3, 3), padding="valid") #upsample
 layer = deconv_block(layer, 32, (3, 3))
 layer = deconv_block(layer, 32, (3, 3))
-layer = deconv_block(layer, 32, (3, 3))
+layer = deconv_block(layer, 32, (3, 3), padding="valid") #upsample
 layer = deconv_block(layer, 4, (3, 3))
 layer = keras.layers.Conv2DTranspose(4, (5, 5), activation="sigmoid", padding="same")(layer)
 
