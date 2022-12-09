@@ -17,7 +17,7 @@ model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
     save_freq=20)
 
 cosine_decay_learning_rate = tf.keras.callbacks.LearningRateScheduler(
-    tf.keras.optimizers.schedules.CosineDecay(0.0019, 5000))
+    tf.keras.optimizers.schedules.CosineDecay(0.0019, 10000))
 
 model.compile(optimizer='adam', loss=ssim_loss)
 model.fit(
